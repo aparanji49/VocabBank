@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ExplainVerbosity } = require('mongodb');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,6 +15,7 @@ app.use(express.json());
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
 
+// ======= APIs ========================
 // GET /api/words - paginated vocab list
 app.get('/api/words', async (req, res) => {
     try {
@@ -53,6 +54,39 @@ const filter = search
     }
   });
   
+  // POST /api/words - add new vocabulary word
+  app.post('/api/words/add', async (req,res) => {
+    const {word, meaning, example} = req.body;
+
+    // fields validation
+    if(!word || !meaning || !example){
+      return res.status(400).json({error:"All fields are required"});
+    }
+
+    try{
+      await client.connect();
+      const db = client.db("vocabBank");
+      const collection = db.collection("words");
+
+      const existingWord = await collection.findOne({word: word.toLowerCase().trim()});
+
+      if(existingWord){
+        return res.status(409).json({error:"Word already exists"});
+      }
+
+      // if not an existing word add it to the mongodb
+      const newWord = {word: word.toLowerCase().trim(), meaning: meaning.trim(), example: example.trim()};
+      const result = await collection.insertOne(newWord);
+
+      res.status(201).json(newWord);
+
+    }catch(e){
+      console.error(e);
+      res.status(500).json({ error: "Internal server error" });
+    }finally{
+      await client.close();
+    }
+  });
 
   
 // Start the server

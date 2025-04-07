@@ -1,18 +1,45 @@
 import { useState } from "react";
-
+import { toast } from "react-toastify";
 function AddWordModal({ onAdd }) {
   const [isOpen, setIsOpen] = useState(false);
   const [word, setWord] = useState("");
   const [meaning, setMeaning] = useState("");
   const [example, setExample] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (word && meaning && example) {
-      onAdd({ word, meaning, example });
-      setWord(""); setMeaning(""); setExample("");
+    if(!word || !meaning || !example) return; // if any of these fields are empty
+
+    try{
+      // fetch request to add word api - post request to add word to mongodb and get a ok response along with the added values
+      const response = await fetch("http://localhost:5000/api/words/add",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({word,meaning,example}),
+      });
+
+      // we'll get a response and we're converting it to json
+      const result = await response.json();
+
+      // if response is not ok, show error message and return
+      if(!response.ok){
+        toast.error(result.error || "Failed to add word.");
+        return;
+      }
+
+      // if response is ok, show success message and update states and close modal
+
+      toast.success("Word Added Successfully! Happy learning!");
+      onAdd(result);
+      setWord("");
+      setMeaning("");
+      setExample("");
       setIsOpen(false);
+
+    }catch(e){
+      toast.error("Something went wrong. Try Again.");
     }
+
   };
 
   return (
@@ -30,6 +57,7 @@ function AddWordModal({ onAdd }) {
             onSubmit={handleSubmit}
             className="bg-white p-6 rounded-xl shadow-md space-y-4 w-full max-w-md"
           >
+            {/* TODO: Add x icon */}
             <h2 className="text-xl font-semibold text-indigo-700">Add a Word</h2>
             <input
               type="text"
