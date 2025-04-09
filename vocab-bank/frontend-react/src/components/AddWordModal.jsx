@@ -11,6 +11,8 @@ function AddWordModal({ onAdd }) {
     if(!word || !meaning || !example) return; // if any of these fields are empty
 
     try{
+      // console.log("WORD:", word, "MEANING:", meaning, "EXAMPLE:", example);
+
       // fetch request to add word api - post request to add word to mongodb and get a ok response along with the added values
       const response = await fetch("http://localhost:5000/api/words/add",{
         method:"POST",

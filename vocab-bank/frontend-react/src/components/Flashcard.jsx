@@ -5,7 +5,7 @@ function Flashcard({ word }) {
   const [flipped, setFlipped] = useState(false);
 
   return (
-    <div className="flashcard-container" onClick={() => setFlipped(!flipped)}>
+    <div className="flashcard-container" data-testid="flashcard" onClick={() => setFlipped(!flipped)}>
       <div className={`flashcard ${flipped ? "flipped" : ""}`}>
         {/* Front side: only word */}
         <div className="front bg-white rounded-xl shadow p-6 flex items-center justify-center">

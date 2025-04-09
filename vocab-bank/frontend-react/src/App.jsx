@@ -31,16 +31,18 @@ function App() {
         return res.json();
       })
       .then((data) => {
+        // console.log("api data:", data);
         setWords(data.words);
         setTotalPages(data.totalPages);
         setError(null);
       })
       .catch((e) => {
-        setError(e.message);
+        // console.log("error message is:"+e.message);
+        setError(e.message || "Unexpected error");
       })
       .finally(() => {
         setLoading(false);
-        setError(null);
+        // setError(null);
       });
   }, [page, searchQuery, reloadTrigger]);
 
