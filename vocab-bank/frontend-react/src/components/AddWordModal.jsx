@@ -14,7 +14,7 @@ function AddWordModal({ onAdd }) {
       // console.log("WORD:", word, "MEANING:", meaning, "EXAMPLE:", example);
 
       // fetch request to add word api - post request to add word to mongodb and get a ok response along with the added values
-      const response = await fetch("http://localhost:5000/api/words/add",{
+      const response = await fetch("https://vocabbank.onrender.com/api/words/add",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({word,meaning,example}),

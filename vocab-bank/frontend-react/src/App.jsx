@@ -21,7 +21,7 @@ function App() {
   // on page change - load data
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:5000/api/words?page=${page}&search=${searchQuery}`)
+    fetch(`https://vocabbank.onrender.com/api/words?page=${page}&search=${searchQuery}`)
       .then(async (res) => {
         if (!res.ok) {
           const e = await res.json();
